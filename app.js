@@ -25,6 +25,67 @@ var getURLParameter = function (name) {
     return match && decodeURIComponent(match[1].replace(/\+/g, ' ')).replace('\u200E', '');
 }
 
+var betterSticky = (function ($, window, document, undefined) {
+    "use strict";
+
+    var $doc = $(document);
+    var sections = [];
+    var offsetTop = $el => $el.offsetParent().position().top;
+
+    function debounce(fn, delay) {
+      var pending;
+
+      function deb(...args) {
+        if (pending) { clearTimeout(pending); }
+
+        pending = setTimeout(fn, delay, ...args);
+      }
+
+      return deb;
+    }
+
+    function registerSticky(el) {
+        sections.push($(el));
+    }
+
+    function scrollHandler(event, update) {
+        var top = $doc.scrollTop();
+        var current = sections
+            .reduce((acc, sect) => top > offsetTop(sect) ? sect : acc, 0);
+
+        update(current);
+    }
+
+    function updateSticky(current) {
+        var cssClass = 'global-sticky';
+
+        $(`.${cssClass}`).remove();
+
+        if (current) {
+          var $clone = $(current)
+              .clone();
+
+          $clone
+              .find('button')
+              .on('click', () => {
+                  // a small hack
+                  current.find('button').click();
+                  // a slightly larger hack
+                  setTimeout(() => updateSticky(current), 1);
+              });
+
+          $(`<div class="${cssClass}" />`)
+              .append($clone)
+              .appendTo(document.body);
+        }
+    }
+
+    document.addEventListener('scroll', event =>
+        scrollHandler(event, debounce(updateSticky, 60)));
+
+    return registerSticky;
+}(jQuery, window, document));
+
 Vue.component('message', {
     template: '#ss-message',
     props: ['negative', 'header', 'value'],
@@ -37,6 +98,7 @@ Vue.component('message', {
         }
     }
 });
+
 Vue.component('modalers', {
     template: '#ss-modals',
     props: ['upload_trigger'],
@@ -588,21 +650,7 @@ Vue.component('surveys', {
 
 Vue.directive('sticky', {
     inserted: function (el) {
-        $(el)
-            .sticky({
-                offset: 20,
-                bottomOffset: 20,
-                observeChanges: true
-            })
-            .sticky('refresh');
-    },
-    componentUpdated: function (el) {
-        // update all stickies when any single one is refreshed - avoids weirdness
-        $('.ui.sticky').sticky('refresh');
-    },
-    update: function (el) {
-        // update all stickies when any single one is refreshed - avoids weirdness
-        $('.ui.sticky').sticky('refresh');
+        betterSticky(el);
     }
 });
 
