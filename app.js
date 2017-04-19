@@ -87,8 +87,9 @@ var betterSticky = (function ($, window, document, undefined) {
         }
     }
 
-    document.addEventListener('scroll', event =>
-        scrollHandler(event, debounce(updateSticky, 60)));
+    document.addEventListener('scroll', function (event) {
+      scrollHandler(event, debounce(updateSticky, 60));
+    });
 
     return registerSticky;
 }(jQuery, window, document));
