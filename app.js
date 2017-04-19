@@ -56,7 +56,10 @@ var betterSticky = (function ($, window, document, undefined) {
     function scrollHandler(event, update) {
         var top = $doc.scrollTop();
         var current = sections
-            .reduce((acc, sect) => top > offsetTop(sect) ? sect : acc, 0);
+            .reduce(function (acc, sect) {
+
+              return top > offsetTop(sect) ? sect : acc;
+            }, 0)
 
         update(current);
     }
@@ -72,11 +75,10 @@ var betterSticky = (function ($, window, document, undefined) {
 
           $clone
               .find('button')
-              .on('click', () => {
+              .on('click', function () {
+                updateSticky(current);
                   // a small hack
                   current.find('button').click();
-                  // a slightly larger hack
-                  setTimeout(() => updateSticky(current), 1);
               });
 
           $(`<div class="${cssClass}" />`)
