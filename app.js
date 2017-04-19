@@ -67,7 +67,7 @@ var betterSticky = (function ($, window, document, undefined) {
     function updateSticky(current) {
         var cssClass = 'global-sticky';
 
-        $(`.${cssClass}`).remove();
+        $('.' + cssClass).remove();
 
         if (current) {
           var $clone = $(current)
@@ -81,7 +81,7 @@ var betterSticky = (function ($, window, document, undefined) {
                   current.find('button').click();
               });
 
-          $(`<div class="${cssClass}" />`)
+          $('<div class="#" />'.replace('#', cssClass))
               .append($clone)
               .appendTo(document.body);
         }
