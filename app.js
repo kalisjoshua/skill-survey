@@ -30,14 +30,15 @@ var betterSticky = (function ($, window, document, undefined) {
 
     var $doc = $(document);
     var sections = [];
+    var slice = Function.prototype.call.bind([].slice);
 
     function debounce(fn, delay) {
       var pending;
 
-      function deb(...args) {
+      function deb() {
         if (pending) { clearTimeout(pending); }
 
-        pending = setTimeout(fn, delay, ...args);
+        pending = setTimeout.apply(window, [fn, delay].concat(slice(arguments)));
       }
 
       return deb;
