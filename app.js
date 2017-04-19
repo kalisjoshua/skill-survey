@@ -30,7 +30,6 @@ var betterSticky = (function ($, window, document, undefined) {
 
     var $doc = $(document);
     var sections = [];
-    var offsetTop = $el => $el.offsetParent().position().top;
 
     function debounce(fn, delay) {
       var pending;
@@ -42,6 +41,11 @@ var betterSticky = (function ($, window, document, undefined) {
       }
 
       return deb;
+    }
+
+    function offsetTop($el) {
+
+      return $el.offsetParent().position().top;
     }
 
     function registerSticky(el) {
